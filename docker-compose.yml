@@ -1,5 +1,16 @@
 version: '3.8'
 services:
+  db:
+    image: postgres:13
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
   backend:
     build:
       context: ./backend
@@ -9,7 +20,12 @@ services:
     volumes:
       - ./backend:/usr/src/app
     environment:
-      - NODE_ENV=development
+      NODE_ENV: development
+      DATABASE_URL: ${DATABASE_URL}
+      DB_HOST: db
+      DB_PORT: 5432
+    depends_on:
+      - db
 
   frontend:
     build:
@@ -20,4 +36,9 @@ services:
     volumes:
       - ./frontend:/usr/src/app
     environment:
-      - NODE_ENV=development
+      NODE_ENV: development
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:
