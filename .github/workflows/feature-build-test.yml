@@ -12,17 +12,23 @@ jobs:
   build-and-test:
     runs-on: ubuntu-latest
 
+    env:
+      POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+      POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+      POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+      POSTGRES_HOST: ${{ secrets.POSTGRES_HOST }}
+      POSTGRES_PORT: ${{ secrets.POSTGRES_PORT }}
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      
     services:
       postgres:
         image: postgres:13
         env:
           POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
-          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
-          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
-        ports:
-          - 5432:5432
+          POSTGRES_USER: $POSTGRES_USER
+          POSTGRES_PASSWORD: $POSTGRES_PASSWORD
         options: >-
-          --health-cmd="pg_isready -U ${{ secrets.POSTGRES_USER }}" 
+          --health-cmd="pg_isready -U $POSTGRES_USER" 
           --health-interval=10s 
           --health-timeout=5s 
           --health-retries=5
@@ -36,25 +42,19 @@ jobs:
       with:
         node-version: '16'
 
-    - name: Print Environment Variables
+    - name: Print environment variables for debugging
       run: |
-        echo "POSTGRES_DB: ${{ secrets.POSTGRES_DB }}"
-        echo "POSTGRES_USER: ${{ secrets.POSTGRES_USER }}"
-        echo "POSTGRES_HOST: ${{ secrets.POSTGRES_HOST }}"
-        echo "POSTGRES_PORT: ${{ secrets.POSTGRES_PORT }}"
-        echo "DATABASE_URL: ${{ secrets.DATABASE_URL }}"
+        echo "POSTGRES_DB=$POSTGRES_DB"
+        echo "POSTGRES_USER=$POSTGRES_USER"
+        echo "POSTGRES_PASSWORD=$POSTGRES_PASSWORD"
+        echo "POSTGRES_HOST=$POSTGRES_HOST"
+        echo "POSTGRES_PORT=$POSTGRES_PORT"
+        echo "DATABASE_URL=$DATABASE_URL"
 
     - name: Install dependencies
       run: npm install
 
     - name: Run Docker Compose for tests
-      env:
-        POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
-        POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
-        POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
-        POSTGRES_HOST: ${{ secrets.POSTGRES_HOST }}
-        POSTGRES_PORT: ${{ secrets.POSTGRES_PORT }}
-        DATABASE_URL: ${{ secrets.DATABASE_URL }}
       run: |
         docker-compose up -d
         docker-compose exec backend npx prisma migrate dev --name init --skip-seed
