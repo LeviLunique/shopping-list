@@ -6,7 +6,7 @@ COPY package*.json ./
 RUN npm install
 RUN npm install prisma @prisma/client
 
-RUN apt-get update && apt-get install -y netcat
+RUN apt-get update && apt-get install -y netcat postgresql-client
 
 COPY . .
 
