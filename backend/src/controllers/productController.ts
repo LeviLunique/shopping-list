@@ -11,10 +11,11 @@ export const createProduct = async (req: Request, res: Response) => {
             data: {
                 name,
                 value,
-            }
+            },
         });
         res.status(201).json(product);
     } catch (error) {
+        console.error('Error creating product:', error)
         res.status(500).json({ error: 'Internal Server Error' });
     }
 };
