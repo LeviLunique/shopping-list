@@ -11,6 +11,6 @@ echo "PostgreSQL started"
 export DATABASE_URL="postgresql://$POSTGRES_USER:$POSTGRES_PASSWORD@$POSTGRES_HOST:$POSTGRES_PORT/$POSTGRES_DB"
 echo "DATABASE_URL set to $DATABASE_URL"
 
-npx prisma migrate dev --name init --skip-seed
+npx prisma migrate deploy
 
 exec "$@"

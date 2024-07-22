@@ -9,6 +9,6 @@ generator client {
 
 model Product {
   id    Int    @id @default(autoincrement())
-  name  String
+  name  String @db.VarChar(255)
   value Float
 }

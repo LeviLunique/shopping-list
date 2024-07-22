@@ -6,6 +6,10 @@ const prisma = new PrismaClient();
 export const createProduct = async (req: Request, res: Response) => {
     const { name, value } = req.body;
 
+    if (typeof name !== 'string' || name.length > 255) {
+        return res.status(400).json({ error: 'Product name is too long. Maximum length is 255 characters.'});
+    }
+
     try {
         const product = await prisma.product.create({
             data: {
