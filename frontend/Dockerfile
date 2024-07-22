@@ -6,6 +6,7 @@ COPY package*.json ./
 RUN npm install
 
 RUN npm install next@14.2.5
+RUN npm install axios
 
 COPY . .
 
